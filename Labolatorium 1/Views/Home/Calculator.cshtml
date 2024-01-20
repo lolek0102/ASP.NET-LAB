@@ -1,0 +1,56 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator</title>
+</head>
+<body>
+    <h2>Wynik działania dla @ViewBag.A @ViewBag.Op @ViewBag.B =</h2>
+    @{
+        if (ViewBag.A != null && ViewBag.B != null)
+        {
+            double result = 0;
+            bool calculationDone = true;
+            switch (ViewBag.Op)
+            {
+                case "Add":
+                    result = ViewBag.A + ViewBag.B;
+                    break;
+                case "Sub":
+                    result = ViewBag.A - ViewBag.B;
+                    break;
+                case "Mul":
+                    result = ViewBag.A * ViewBag.B;
+                    break;
+                case "Div":
+                    if (ViewBag.B != 0)
+                    {
+                        result = ViewBag.A / ViewBag.B;
+                    }
+                    else
+                    {
+                        calculationDone = false;
+                        <p>Nie można dzielić przez zero.</p>
+                    }
+                    break;
+                default:
+                    calculationDone = false;
+                    <p>Nieznany operator.</p>
+                    break;
+            }
+
+            if (calculationDone)
+            {
+                <p>Wynik: @result</p>
+            }
+        }
+        else
+        {
+            <p>Brakujące parametry a lub b.</p>
+        }
+    }
+</body>
+</html>

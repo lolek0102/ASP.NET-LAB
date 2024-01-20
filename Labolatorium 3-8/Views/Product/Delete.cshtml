@@ -1,0 +1,30 @@
+﻿@model Labolatorium_3_8.Models.Product
+
+<h2>Usuń Produkt</h2>
+
+<h3>Czy jesteś pewny, że chcesz usunąć ten produkt?</h3>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div>
+        <label asp-for="Name">Nazwa produktu</label>
+        <input asp-for="Name" class="form-control" readonly />
+    </div>
+    <div>
+        <label asp-for="Price">Cena</label>
+        <input asp-for="Price" class="form-control" readonly />
+    </div>
+    <div>
+        <label asp-for="ProductionDate">Data Produkcji</label>
+        <input asp-for="ProductionDate" class="form-control" readonly />
+    </div>
+    <div>
+        <label asp-for="Description">Opis</label>
+        <input asp-for="Description" class="form-control" readonly />
+    </div>
+ 
+
+
+    <button type="submit" class="btn btn-danger">Usuń</button>
+    <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+</form>

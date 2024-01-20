@@ -1,0 +1,30 @@
+﻿@model Labolatorium_3_8.Models.Product
+
+<h2>Szczegóły Produktu</h2>
+
+<div>
+    <h4>Nazwa produktu</h4>
+    <p>@Model.Name</p>
+</div>
+
+<div>
+    <h4>Cena</h4>
+    <p>@Model.Price</p>
+</div>
+
+<div>
+    <h4>Producent</h4>
+    <p>@Model.Manufacturer</p>
+</div>
+
+<div>
+    <h4>Data produkcji</h4>
+    <p>@Model.ProductionDate.ToShortDateString()</p>
+</div>
+
+<div>
+    <h4>Opis</h4>
+    <p>@Model.Description</p>
+</div>
+
+<a asp-action="Index" class="btn btn-primary">Powrót do listy</a>
