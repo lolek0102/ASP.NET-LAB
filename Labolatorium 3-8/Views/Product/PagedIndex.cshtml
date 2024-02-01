@@ -1,0 +1,48 @@
+﻿@model Labolatorium_3_8.Services.PagingList<Labolatorium_3_8.Models.Product>
+
+<h2>Stronicowane Produkty</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Cena</th>
+            <th>Producent</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Items)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.Price.ToString("C")</td>
+                <td>@product.Manufacturer</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        @if (Model.PageNumber > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(Model.PageNumber - 1)&size=@Model.PageSize">Poprzednia</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                <a class="page-link" href="?page=@i&size=@Model.PageSize">@i</a>
+            </li>
+        }
+
+        @if (Model.PageNumber < Model.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" href="?page=@(Model.PageNumber + 1)&size=@Model.PageSize">Następna</a>
+            </li>
+        }
+    </ul>

@@ -1,17 +1,35 @@
 ﻿using Labolatorium_3_8.Models;
+using Labolatorium_3_8.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace YourNamespace.Controllers
 {
     public class ProductController : Controller
     {
-        private static Dictionary<int, Product> _products = new Dictionary<int, Product>();
+        private readonly IProductService _productService;
+
+        public ProductController(IProductService productService)
+        {
+            _productService = productService;
+        }
 
         public IActionResult Index()
         {
-            return View(_products);
+            ViewData["Visit"] = Response.HttpContext.Items[LastVisitCookie.CookieName];
+            var productsList = _productService.GetAll();
+            var productsDictionary = productsList.ToDictionary(p => p.Id, p => p);
+            return View(productsDictionary);
         }
+        public IActionResult FilteredIndex()
+        {
+            ViewData["Visit"] = Response.HttpContext.Items[LastVisitCookie.CookieName];
+            var productsList = _productService.GetAll();
+            var productsDictionary = productsList.ToDictionary(p => p.Id, p => p);
+            return View(productsDictionary);
+        }
+
 
         [HttpGet]
         public IActionResult Create()
@@ -24,10 +42,7 @@ namespace YourNamespace.Controllers
         {
             if (ModelState.IsValid)
             {
-                int id = _products.Count + 1;
-                product.Id = id;
-                _products.Add(id, product);
-
+                _productService.Add(product);
                 return RedirectToAction("Index");
             }
             else
@@ -39,9 +54,10 @@ namespace YourNamespace.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            if (_products.ContainsKey(id))
+            var product = _productService.GetById(id);
+            if (product != null)
             {
-                return View(_products[id]);
+                return View(product);
             }
             else
             {
@@ -54,7 +70,7 @@ namespace YourNamespace.Controllers
         {
             if (ModelState.IsValid)
             {
-                _products[id] = product;
+                _productService.Update(product);
                 return RedirectToAction("Index");
             }
             else
@@ -62,37 +78,95 @@ namespace YourNamespace.Controllers
                 return View(product);
             }
         }
+
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            if (_products.ContainsKey(id))
+            var product = _productService.GetById(id);
+            if (product != null)
             {
-                return View(_products[id]);
+                return View(product);
             }
             else
             {
                 return NotFound();
             }
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            _productService.Delete(id);
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Details(int id)
+        {
+            var product = _productService.GetById(id);
+            if (product != null)
+            {
+                return View(product);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        [HttpGet]
+        public IActionResult GetFiltered(string filter)
+        {
+            var filteredProducts = _productService.GetAll()
+                .Where(p => p.Name.StartsWith(filter))
+                .Select(p => new
+                {
+                    p.Name,
+                    p.Price,
+                    p.Manufacturer,
+                    ProductionDate = p.ProductionDate.ToShortDateString()
+                })
+                .ToList();
+
+            return Ok(filteredProducts);
+        }
+
+        [HttpGet]
+        public IActionResult AddSupplier()
+        {
+            return View();
         }
 
         [HttpPost]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult AddSupplier(Supplier supplier)
         {
-            _products.Remove(id);
-            return RedirectToAction("Index");
-        }
-        public IActionResult Details(int id)
-        {
-            if (_products.ContainsKey(id))
+            if (ModelState.IsValid)
             {
-                return View(_products[id]);
+                _productService.AddSupplier(supplier);
+                return RedirectToAction("Index"); // Możesz przekierować do innego widoku
             }
-            else
-            {
-                return NotFound();
-            }
+            return View(supplier);
         }
 
+        [HttpGet]
+        public IActionResult AddShippingCarrier()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult AddShippingCarrier(ShippingCarrier shippingCarrier)
+        {
+            if (ModelState.IsValid)
+            {
+                _productService.AddShippingCarrier(shippingCarrier);
+                return RedirectToAction("Index"); // Możesz przekierować do innego widoku
+            }
+            return View(shippingCarrier);
+        }
+        [AllowAnonymous]
+        public IActionResult PagedIndex(int page = 1, int size = 5)
+        {
+            var pagedResult = _productService.FindPage(page, size);
+            return View(pagedResult);
+        }
     }
 }

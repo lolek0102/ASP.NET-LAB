@@ -1,0 +1,12 @@
+﻿@model Labolatorium_3_8.Models.Supplier
+
+<h2>Dodaj Dostawcę</h2>
+
+<form asp-action="AddSupplier" asp-controller="Product">
+    <div class="form-group">
+        <label asp-for="Name">Nazwa Dostawcy</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</form>
