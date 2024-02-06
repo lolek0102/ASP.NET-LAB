@@ -13,6 +13,11 @@ namespace Labolatorium_3_8.Services
         IEnumerable<Product> GetFilteredProducts(ProductFilterModel filterModel);
         void AddSupplier(Supplier supplier);
         void AddShippingCarrier(ShippingCarrier shippingCarrier);
+
+        IEnumerable<ShippingCarrier> GetShippingCarriers();
+        IEnumerable<Supplier> GetSuppliers();
+        void AssignSupplierAndCarrierToProduct(Product product);
+
     }
 
 }

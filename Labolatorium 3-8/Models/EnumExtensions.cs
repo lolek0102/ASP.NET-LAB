@@ -10,8 +10,9 @@ namespace Labolatorium_3_8.Models
             return enumValue.GetType()
                             .GetMember(enumValue.ToString())
                             .First()
-                            .GetCustomAttribute<DisplayAttribute>()
-                            ?.GetName();
+                            .GetCustomAttribute<DisplayAttribute>()?
+                            .GetName() ?? enumValue.ToString();
         }
     }
+
 }

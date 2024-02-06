@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Labolatorium_3_8.Data;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Labolatorium_3_8.Services
 {
@@ -61,10 +62,21 @@ namespace Labolatorium_3_8.Services
                 _context.SaveChanges();
             }
         }
+        public void AssignSupplierAndCarrierToProduct(Product product)
+        {
+            if (product.SupplierId > 0)
+            {
+                product.Supplier = _context.Suppliers.Find(product.SupplierId);
+            }
 
+            if (product.ShippingCarrierId > 0)
+            {
+                product.ShippingCarrier = _context.ShippingCarriers.Find(product.ShippingCarrierId);
+            }
+        }
         public List<Product> GetAll()
         {
-            return _context.Products.ToList();
+            return _context.Products.Include(p => p.Supplier).ToList();
         }
 
         public Product GetById(int id)
@@ -74,6 +86,7 @@ namespace Labolatorium_3_8.Services
 
         public void Update(Product product)
         {
+
             var existingProduct = _context.Products.Find(product.Id);
             if (existingProduct != null)
             {
@@ -81,7 +94,15 @@ namespace Labolatorium_3_8.Services
                 _context.SaveChanges();
             }
         }
+        public IEnumerable<Supplier> GetSuppliers()
+        {
+            return _context.Suppliers.ToList();
+        }
 
+        public IEnumerable<ShippingCarrier> GetShippingCarriers()
+        {
+            return _context.ShippingCarriers.ToList();
+        }
         public void AddSupplier(Supplier supplier)
         {
             _context.Suppliers.Add(supplier);

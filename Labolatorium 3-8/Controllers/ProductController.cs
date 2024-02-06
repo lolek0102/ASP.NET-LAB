@@ -2,6 +2,7 @@
 using Labolatorium_3_8.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace YourNamespace.Controllers
@@ -34,13 +35,18 @@ namespace YourNamespace.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.Suppliers = new SelectList(_productService.GetSuppliers(), "Id", "Name");
+            ViewBag.ShippingCarriers = new SelectList(_productService.GetShippingCarriers(), "Id", "Name");
+
             return View();
         }
 
         [HttpPost]
         public IActionResult Create(Product product)
         {
-            if (ModelState.IsValid)
+            _productService.AssignSupplierAndCarrierToProduct(product);
+
+            if (!ModelState.IsValid)
             {
                 _productService.Add(product);
                 return RedirectToAction("Index");
@@ -54,6 +60,9 @@ namespace YourNamespace.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
+            ViewBag.Suppliers = new SelectList(_productService.GetSuppliers(), "Id", "Name");
+            ViewBag.ShippingCarriers = new SelectList(_productService.GetShippingCarriers(), "Id", "Name");
+
             var product = _productService.GetById(id);
             if (product != null)
             {
@@ -68,7 +77,9 @@ namespace YourNamespace.Controllers
         [HttpPost]
         public IActionResult Edit(int id, Product product)
         {
-            if (ModelState.IsValid)
+            _productService.AssignSupplierAndCarrierToProduct(product);
+
+            if (!ModelState.IsValid)
             {
                 _productService.Update(product);
                 return RedirectToAction("Index");
@@ -93,7 +104,7 @@ namespace YourNamespace.Controllers
             }
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteConfirmed")]
         public IActionResult DeleteConfirmed(int id)
         {
             _productService.Delete(id);
@@ -167,6 +178,11 @@ namespace YourNamespace.Controllers
         {
             var pagedResult = _productService.FindPage(page, size);
             return View(pagedResult);
+        }
+        private void PrepareSuppliersAndCarriers()
+        {
+            ViewBag.Suppliers = new SelectList(_productService.GetSuppliers(), "Id", "Name");
+            ViewBag.ShippingCarriers = new SelectList(_productService.GetShippingCarriers(), "Id", "Name");
         }
     }
 }

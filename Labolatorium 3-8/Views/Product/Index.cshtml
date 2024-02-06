@@ -1,12 +1,16 @@
 ﻿@model Dictionary<int, Labolatorium_3_8.Models.Product>
-
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <h3>Last visit: @ViewData["Visit"]</h3>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
 <h2>Lista Produktów</h2>
 
 <table class="table">
     <tr>
         <th>Nazwa</th>
         <th>Cena</th>
-        <th>Producent</th>
+        <th>Dostawca</th>
         <th>Akcje</th>
     </tr>
     @foreach (var item in Model)
@@ -14,7 +18,7 @@
         <tr>
             <td>@item.Value.Name</td>
             <td>@item.Value.Price</td>
-            <td>@item.Value.Manufacturer</td>
+            <td>@item.Value.Supplier.Name</td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Key">Edytuj</a> |
                 <a asp-action="Details" asp-route-id="@item.Key">Szczegóły</a> |
